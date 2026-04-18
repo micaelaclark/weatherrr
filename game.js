@@ -319,7 +319,7 @@ function dateToSeed(dateStr) {
 function pickSessionCities() {
   const rand = seededRandom(dateToSeed(getTodayString()));
   const shuffled = [...CITIES].sort(() => rand() - 0.5);
-  return shuffled.slice(0, 5);
+  return shuffled.slice(0, 3);
 }
 
 async function startGame() {
@@ -388,7 +388,7 @@ function submitGuess() {
 
   document.getElementById('guessSection').style.display = 'none';
 
-  const isLast = soloRound === 4;
+  const isLast = soloRound === 2;
   showResult(actualTempC, guessC, diff, score, sessionScore, actualCondition, isLast);
 
   if (isLast) {
@@ -475,11 +475,11 @@ function showResult(actualC, guessC, diff, score, runningTotal, condition, isLas
     nextBtn.textContent = 'See Results →';
     nextBtn.onclick = showEndCard;
     nextBtn.style.display = 'block';
-    document.getElementById('roundIndicator').textContent = 'City 5 of 5';
+    document.getElementById('roundIndicator').textContent = 'City 3 of 3';
   } else {
     nextBtn.textContent = 'Next City →';
     nextBtn.onclick = soloNextCity;
-    document.getElementById('roundIndicator').textContent = `City ${soloRound + 1} of 5`;
+    document.getElementById('roundIndicator').textContent = `City ${soloRound + 1} of 3`;
   }
 
   document.getElementById('resultCard').style.display = 'flex';
@@ -542,7 +542,7 @@ function copyFallback(text, btn) {
 // --- End screen ---
 
 function showEndCard() {
-  const pct = sessionScore / 5000;
+  const pct = sessionScore / 3000;
   let message;
   if (pct < 0.5)       message = "You just got weathered.";
   else if (pct < 0.75) message = "Get Weathering";
@@ -560,13 +560,13 @@ function showEndCard() {
 }
 
 function shareEndScore() {
-  const pct = Math.round(sessionScore / 5000 * 100);
+  const pct = Math.round(sessionScore / 3000 * 100);
   const message = document.getElementById('endMessage').textContent;
   const date = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
   const text = [
     `🌤 weathErrr? — ${date}`,
-    `⭐ ${sessionScore} / 5000 pts (${pct}%)`,
+    `⭐ ${sessionScore} / 3000 pts (${pct}%)`,
     `${message}`,
   ].join('\n');
 
