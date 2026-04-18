@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>weathErrr?</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="game-container">
+    <header>
+      <div class="header-top">
+        <h1 onclick="goHome()" style="cursor:pointer">weathErrr?</h1>
+        <button class="save-btn" id="saveBtn" onclick="openSaveStats()">Save stats</button>
+      </div>
+      <div class="date" id="date"></div>
+    </header>
+
+    <p class="intro-text">hello my fair weatherd friends the game is to guess the live weather in each place you'll get five cities each day it'll change scoring below have fun</p>
+
+    <main>
+      <div class="city-card" id="cityCard" style="display:none">
+        <div class="loading" id="loading">Loading...</div>
+
+        <div class="city-info" id="cityInfo" style="display:none">
+          <div class="city-flag" id="cityFlag"></div>
+          <h2 id="cityName"></h2>
+          <p class="city-country" id="cityCountry"></p>
+          <p class="city-time" id="cityTime"></p>
+          <p class="prompt">What's the current temperature?</p>
+        </div>
+      </div>
+
+      <div class="guess-section" id="guessSection" style="display:none">
+        <div class="unit-toggle">
+          <button class="unit-btn active" id="btnC" onclick="setUnit('C')">°C</button>
+          <button class="unit-btn" id="btnF" onclick="setUnit('F')">°F</button>
+        </div>
+        <div class="input-row">
+          <button class="adj-btn" onclick="adjustTemp(-1)">−</button>
+          <div class="temp-display">
+            <input type="number" id="tempInput" value="20" step="1">
+            <span class="unit-label" id="unitLabel">°C</span>
+          </div>
+          <button class="adj-btn" onclick="adjustTemp(1)">+</button>
+        </div>
+        <button class="submit-btn" id="submitBtn" onclick="handleGuess()">Submit Guess</button>
+      </div>
+
+      <img class="city-photo" id="cityPhoto" alt="" style="display:none">
+
+      <div class="result-card" id="resultCard" style="display:none">
+        <div class="result-condition" id="resultCondition"></div>
+        <div class="result-temps">
+          <div class="result-row">
+            <span class="label">Actual</span>
+            <strong id="actualTemp"></strong>
+          </div>
+          <div class="result-row">
+            <span class="label">Your guess</span>
+            <strong id="guessedTemp"></strong>
+          </div>
+        </div>
+        <div class="diff-badge" id="diffDisplay"></div>
+        <div class="scores">
+          <div class="score-box">
+            <span>This City</span>
+            <strong id="todayScore"></strong>
+          </div>
+          <div class="score-divider"></div>
+          <div class="score-box">
+            <span>Session</span>
+            <strong id="totalScore"></strong>
+          </div>
+        </div>
+        <div class="climate-section" id="climateSection" style="display:none">
+          <div class="climate-loading" id="climateLoading">Loading climate data...</div>
+          <div class="climate-content" id="climateContent" style="display:none">
+            <p class="climate-title" id="climateTitle"></p>
+            <div class="climate-rows">
+              <div class="climate-row">
+                <span class="climate-label">Typical daily range</span>
+                <span class="climate-value" id="climateRange"></span>
+              </div>
+              <div class="climate-row">
+                <span class="climate-label">Monthly avg</span>
+                <span class="climate-value" id="climateAvg"></span>
+              </div>
+              <div class="climate-row">
+                <span class="climate-label">3-yr extremes</span>
+                <span class="climate-value" id="climateRecords"></span>
+              </div>
+            </div>
+            <p class="climate-vs" id="climateVs"></p>
+          </div>
+        </div>
+        <button class="submit-btn" id="soloNextBtn" style="display:none">Next City →</button>
+        <button class="share-btn" id="shareBtn" onclick="shareScore()">Share Score</button>
+        <p class="comeback" id="roundIndicator"></p>
+      </div>
+
+      <!-- End of game screen -->
+      <div class="end-card" id="endCard" style="display:none">
+        <p class="end-label">Final Score</p>
+        <div class="end-score-wrap">
+          <span class="end-score" id="endScore"></span>
+          <span class="end-out-of">/ 5000</span>
+        </div>
+        <p class="end-pct" id="endPct"></p>
+        <p class="end-message" id="endMessage"></p>
+        <button class="submit-btn" onclick="shareEndScore()">Share Score</button>
+      </div>
+    </main>
+
+    <div class="scoring-guide">
+      <p class="scoring-guide-title">How scoring works</p>
+      <div class="scoring-tiers">
+        <div class="scoring-tier"><span class="tier-range">±1°</span><span class="tier-label">Exact</span><span class="tier-pts great-pts">1000</span></div>
+        <div class="scoring-tier"><span class="tier-range">±3°</span><span class="tier-label">Close</span><span class="tier-pts good-pts">750</span></div>
+        <div class="scoring-tier"><span class="tier-range">±5°</span><span class="tier-label">Decent</span><span class="tier-pts good-pts">500</span></div>
+        <div class="scoring-tier"><span class="tier-range">±10°</span><span class="tier-label">Ballpark</span><span class="tier-pts off-pts">250</span></div>
+        <div class="scoring-tier"><span class="tier-range">>10°</span><span class="tier-label">Way off</span><span class="tier-pts off-pts">0</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="statsModal" style="display:none" onclick="closeStats(event)">
+    <div class="modal-content">
+      <button class="close-btn" onclick="closeStats()">×</button>
+      <h2>Your Stats</h2>
+      <p class="stats-username" id="statsUsername"></p>
+      <div class="stats-grid">
+        <div class="stat">
+          <strong id="statPlayed">0</strong>
+          <span>Games</span>
+        </div>
+        <div class="stat">
+          <strong id="statTotal">0</strong>
+          <span>Total Pts</span>
+        </div>
+        <div class="stat">
+          <strong id="statAvg">0</strong>
+          <span>Avg / Game</span>
+        </div>
+        <div class="stat">
+          <strong id="statBest">0</strong>
+          <span>Best Game</span>
+        </div>
+      </div>
+      <button class="change-name-btn" onclick="closeStats(); openSaveStats()">Change screenname</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="saveModal" style="display:none" onclick="closeSaveStats(event)">
+    <div class="modal-content">
+      <button class="close-btn" onclick="closeSaveStats()">×</button>
+      <h2>Save Your Stats</h2>
+      <p class="save-description">Pick a screenname and your scores will be saved to this device.</p>
+      <input class="auth-input" type="text" id="screennameInput" placeholder="Your screenname" maxlength="20" onkeydown="if(event.key==='Enter')saveScreenname()">
+      <button class="submit-btn" onclick="saveScreenname()">Save</button>
+      <p class="auth-error" id="saveError"></p>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
