@@ -267,6 +267,26 @@ function getScreenname() {
   return localStorage.getItem(SCREENNAME_KEY) || null;
 }
 
+function migrateOrphanedStats(name) {
+  if (!name) return;
+  try {
+    const orphaned = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+    if (!orphaned.gamesPlayed) return; // nothing to migrate
+    const userKey = `wg-stats-${name}`;
+    const existing = JSON.parse(localStorage.getItem(userKey)) || {};
+    const merged = {
+      gamesPlayed: (existing.gamesPlayed || 0) + (orphaned.gamesPlayed || 0),
+      totalScore:  (existing.totalScore  || 0) + (orphaned.totalScore  || 0),
+      bestGame:    Math.max(existing.bestGame || 0, orphaned.bestGame || 0),
+      streak:      existing.streak    || orphaned.streak    || 0,
+      lastPlayed:  existing.lastPlayed || orphaned.lastPlayed || null,
+    };
+    localStorage.setItem(userKey, JSON.stringify(merged));
+    localStorage.removeItem(STORAGE_KEY);
+    syncToSupabase(name, merged);
+  } catch {}
+}
+
 function getEmoji() {
   return localStorage.getItem(EMOJI_KEY) || '';
 }
@@ -327,6 +347,7 @@ function saveScreenname() {
   const selectedBtn = document.querySelector('.emoji-opt.selected');
   localStorage.setItem(SCREENNAME_KEY, name);
   localStorage.setItem(EMOJI_KEY, selectedBtn ? selectedBtn.textContent : '');
+  migrateOrphanedStats(name);
   updateSaveBtn();
   document.getElementById('saveModal').style.display = 'none';
   syncToSupabase(name, loadState());
@@ -915,6 +936,7 @@ function init() {
   document.getElementById('date').textContent = new Date().toLocaleDateString('en-US', {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
   });
+  migrateOrphanedStats(getScreenname());
   updateSaveBtn();
   startGame();
 }
