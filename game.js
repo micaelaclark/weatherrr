@@ -370,7 +370,7 @@ async function openLeaderboard() {
 
   const { data } = await db
     .from('scores')
-    .select('screenname, total_score, games_played, best_game')
+    .select('screenname, total_score, games_played, best_game, emoji')
     .order('total_score', { ascending: false })
     .limit(10);
 
@@ -568,10 +568,12 @@ async function startGame() {
   sessionCities = pickSessionCities();
   sessionResults = [];
 
+  document.getElementById('endCard').style.display = 'none';
   document.getElementById('resultCard').style.display = 'none';
   document.getElementById('guessSection').style.display = 'none';
   document.getElementById('climateSection').style.display = 'none';
   document.getElementById('climateContent').style.display = 'none';
+  document.getElementById('endCities').innerHTML = '';
   const p = document.getElementById('cityPhoto'); p.style.display = 'none'; p.src = '';
   document.getElementById('cityCard').style.display = 'block';
   document.getElementById('cityInfo').style.display = 'none';
@@ -845,7 +847,7 @@ function shareEndScore() {
 
 // --- Stats modal ---
 
-function openStats() {
+async function openStats() {
   const name = getScreenname();
   if (!name) { openSaveStats(); return; }
   const state = loadState();
@@ -855,7 +857,18 @@ function openStats() {
   document.getElementById('statAvg').textContent =
     state.gamesPlayed ? Math.round(state.totalScore / state.gamesPlayed) : 0;
   document.getElementById('statBest').textContent = state.bestGame || 0;
+  document.getElementById('statRank').textContent = '...';
   document.getElementById('statsModal').style.display = 'flex';
+
+  try {
+    const { count } = await db
+      .from('scores')
+      .select('*', { count: 'exact', head: true })
+      .gt('total_score', state.totalScore || 0);
+    document.getElementById('statRank').textContent = `#${(count || 0) + 1}`;
+  } catch {
+    document.getElementById('statRank').textContent = '—';
+  }
 }
 
 function closeStats(e) {
