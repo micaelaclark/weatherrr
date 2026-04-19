@@ -682,6 +682,7 @@ h1 {
   justify-content: center;
   transition: all 0.15s;
   user-select: none;
+  touch-action: manipulation;
 }
 
 .adj-btn:hover {
@@ -739,6 +740,7 @@ h1 {
   text-transform: uppercase;
   cursor: pointer;
   transition: background 0.15s, transform 0.1s;
+  touch-action: manipulation;
 }
 
 .submit-btn:hover {
