@@ -867,7 +867,7 @@ function shareEndScore() {
     `weatherrr.com`,
   ].join('\n');
 
-  const btn = document.querySelector('#endCard .submit-btn');
+  const btn = document.querySelector('#endCard .share-btn');
   copyFallback(text, btn);
 }
 
