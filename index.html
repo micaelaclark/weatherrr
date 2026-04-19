@@ -25,7 +25,7 @@
       <div class="date" id="date"></div>
     </header>
 
-    <p class="intro-text">hello my fair weatherd friends the game is to guess the live weather in each place you'll get three cities each day it'll change scoring below have fun</p>
+    <p class="intro-text" id="introText">hello my fair weatherd friends the game is to guess the live weather in each place you'll get three cities each day it'll change scoring below have fun</p>
 
     <main>
       <div class="city-card" id="cityCard" style="display:none">
@@ -104,7 +104,10 @@
           </div>
         </div>
         <button class="submit-btn" id="soloNextBtn" style="display:none">Next City →</button>
-        <button class="share-btn" id="shareBtn" onclick="shareScore()">Share Score</button>
+        <div class="action-row">
+          <button class="share-btn" id="shareBtn" onclick="shareScore()">Share Score</button>
+          <button class="save-score-btn" id="saveScoreBtn" onclick="openSaveStats()" style="display:none">Save my score</button>
+        </div>
         <p class="comeback" id="roundIndicator"></p>
       </div>
 
@@ -118,7 +121,10 @@
         <p class="end-pct" id="endPct"></p>
         <p class="end-message" id="endMessage"></p>
         <div class="end-cities" id="endCities"></div>
-        <button class="submit-btn" onclick="shareEndScore()">Share Score</button>
+        <div class="action-row">
+          <button class="share-btn" onclick="shareEndScore()">Share Score</button>
+          <button class="save-score-btn" id="saveScoreBtnEnd" onclick="openSaveStats()" style="display:none">Save my score</button>
+        </div>
       </div>
     </main>
 

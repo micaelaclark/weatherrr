@@ -344,6 +344,14 @@ function updateSaveBtn() {
     btn.title = 'Save stats';
     btn.onclick = openSaveStats;
   }
+  const intro = document.getElementById('introText');
+  if (name) {
+    const streak = loadState().streak || 0;
+    const streakText = streak >= 2 ? `  🔥 ${streak}` : '';
+    intro.textContent = `welcome back, ${name} 👋${streakText}`;
+  } else {
+    intro.textContent = 'hello my fair weatherd friends the game is to guess the live weather in each place you\'ll get three cities each day it\'ll change scoring below have fun';
+  }
 }
 
 // --- Supabase sync ---
@@ -538,6 +546,20 @@ function getTodayString() {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
+function getYesterdayString() {
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+function updateStreak(state) {
+  const today = getTodayString();
+  if (state.lastPlayed === today) return state; // already played today
+  state.streak = state.lastPlayed === getYesterdayString() ? (state.streak || 1) + 1 : 1;
+  state.lastPlayed = today;
+  return state;
+}
+
 function seededRandom(seed) {
   // Mulberry32 PRNG — deterministic given the same seed
   return function() {
@@ -637,12 +659,14 @@ function submitGuess() {
   showResult(actualTempC, guessC, diff, score, sessionScore, actualCondition, isLast);
 
   if (isLast) {
-    const state = loadState();
+    let state = loadState();
     state.gamesPlayed = (state.gamesPlayed || 0) + 1;
     state.totalScore = (state.totalScore || 0) + sessionScore;
     state.bestGame = Math.max(state.bestGame || 0, sessionScore);
+    state = updateStreak(state);
     saveState(state);
     syncToSupabase(getScreenname(), state);
+    updateSaveBtn();
   }
 
   loadClimateData(currentCity);
@@ -726,6 +750,7 @@ function showResult(actualC, guessC, diff, score, runningTotal, condition, isLas
   }
 
   document.getElementById('resultCard').style.display = 'flex';
+  document.getElementById('saveScoreBtn').style.display = getScreenname() ? 'none' : 'block';
 }
 
 // --- Next city ---
@@ -803,6 +828,7 @@ async function showEndCard() {
   const photoEl = document.getElementById('cityPhoto');
   photoEl.style.display = 'none'; photoEl.src = '';
   document.getElementById('endCard').style.display = 'flex';
+  document.getElementById('saveScoreBtnEnd').style.display = getScreenname() ? 'none' : 'block';
 
   // Fetch wiki + photos for all 3 cities in parallel
   const citiesEl = document.getElementById('endCities');

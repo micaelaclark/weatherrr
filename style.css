@@ -885,6 +885,33 @@ h1 {
   background: #f8f8fa;
 }
 
+.action-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.save-score-btn {
+  width: 100%;
+  padding: 12px;
+  background: #111827;
+  color: #ffffff;
+  border: none;
+  border-radius: 14px;
+  font-family: 'Lexend', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.save-score-btn:hover {
+  background: #374151;
+}
+
 .comeback {
   font-size: 0.78rem;
   color: #d1d5db;
