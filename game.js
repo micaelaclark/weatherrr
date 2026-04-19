@@ -111,6 +111,10 @@ const WMO_CODES = {
 const STORAGE_KEY    = 'weather-game-v2';
 const SCREENNAME_KEY = 'wg-screenname';
 
+const SUPABASE_URL = 'https://alvqsasgudqynhapexxm.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFsdnFzYXNndWRxeW5oYXBleHhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NDI3MTgsImV4cCI6MjA5MjExODcxOH0.TF1wofDSPupWF22h2SdgVCkm2iS0VRf7K8X-t-9IrV4';
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
 let unit = 'C';
 let actualTempC = null;
 let actualCondition = '';
@@ -192,6 +196,70 @@ function updateSaveBtn() {
     btn.textContent = 'Save stats';
     btn.classList.remove('save-btn-active');
     btn.onclick = openSaveStats;
+  }
+}
+
+// --- Supabase sync ---
+
+async function syncToSupabase(name, stats) {
+  if (!name) return;
+  await db.from('scores').upsert({
+    screenname: name,
+    games_played: stats.gamesPlayed || 0,
+    total_score: stats.totalScore || 0,
+    best_game: stats.bestGame || 0,
+    updated_at: new Date().toISOString()
+  }, { onConflict: 'screenname' });
+}
+
+// --- Leaderboard ---
+
+async function openLeaderboard() {
+  document.getElementById('lbModal').style.display = 'flex';
+  document.getElementById('lbLoading').style.display = 'block';
+  document.getElementById('lbList').innerHTML = '';
+  document.getElementById('lbYourRank').textContent = '';
+
+  const { data } = await db
+    .from('scores')
+    .select('screenname, total_score, games_played, best_game')
+    .order('total_score', { ascending: false })
+    .limit(10);
+
+  document.getElementById('lbLoading').style.display = 'none';
+
+  const me = getScreenname();
+  const rows = data || [];
+
+  if (rows.length === 0) {
+    document.getElementById('lbList').innerHTML = '<p class="lb-empty">No scores yet — be the first!</p>';
+    return;
+  }
+
+  rows.forEach((row, i) => {
+    const isMe = me && row.screenname === me;
+    const div = document.createElement('div');
+    div.className = 'lb-row' + (isMe ? ' lb-row-me' : '');
+    div.innerHTML = `
+      <span class="lb-rank">${i + 1}</span>
+      <span class="lb-name">${row.screenname}${isMe ? ' ★' : ''}</span>
+      <span class="lb-score">${(row.total_score || 0).toLocaleString()}</span>
+    `;
+    document.getElementById('lbList').appendChild(div);
+  });
+
+  if (me && !rows.find(r => r.screenname === me)) {
+    const { data: myRow } = await db.from('scores').select('total_score').eq('screenname', me).single();
+    if (myRow) {
+      const { count } = await db.from('scores').select('*', { count: 'exact', head: true }).gt('total_score', myRow.total_score);
+      document.getElementById('lbYourRank').textContent = `You're ranked #${(count || 0) + 1}`;
+    }
+  }
+}
+
+function closeLb(e) {
+  if (!e || e.target === document.getElementById('lbModal')) {
+    document.getElementById('lbModal').style.display = 'none';
   }
 }
 
@@ -397,6 +465,7 @@ function submitGuess() {
     state.totalScore = (state.totalScore || 0) + sessionScore;
     state.bestGame = Math.max(state.bestGame || 0, sessionScore);
     saveState(state);
+    syncToSupabase(getScreenname(), state);
   }
 
   loadCityPhoto(currentCity);

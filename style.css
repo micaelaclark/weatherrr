@@ -79,6 +79,68 @@ h1 {
   color: #111827;
 }
 
+.lb-btn {
+  position: absolute;
+  left: 0;
+  background: transparent;
+  border: 1px solid #e0e0e0;
+  color: #6b7280;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-family: 'Lexend', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.lb-btn:hover {
+  border-color: #111827;
+  color: #111827;
+}
+
+.lb-loading {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #9ca3af;
+  padding: 16px 0;
+}
+
+.lb-empty {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #9ca3af;
+  padding: 16px 0;
+}
+
+.lb-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  margin-bottom: 6px;
+  background: #f8f8fa;
+}
+
+.lb-row-me {
+  background: #111827;
+}
+
+.lb-row-me .lb-rank,
+.lb-row-me .lb-name,
+.lb-row-me .lb-score {
+  color: #ffffff;
+}
+
+.lb-your-rank {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #9ca3af;
+  margin-top: 8px;
+}
+
 .save-description {
   font-size: 0.82rem;
   color: #6b7280;

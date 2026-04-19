@@ -11,6 +11,7 @@
   <div class="game-container">
     <header>
       <div class="header-top">
+        <button class="lb-btn" onclick="openLeaderboard()">Leaderboard</button>
         <h1 onclick="goHome()" style="cursor:pointer">weathErrr?</h1>
         <button class="save-btn" id="saveBtn" onclick="openSaveStats()">Save stats</button>
       </div>
@@ -152,6 +153,16 @@
     </div>
   </div>
 
+  <div class="modal-overlay" id="lbModal" style="display:none" onclick="closeLb(event)">
+    <div class="modal-content">
+      <button class="close-btn" onclick="closeLb()">×</button>
+      <h2>Leaderboard</h2>
+      <div class="lb-loading" id="lbLoading">Loading...</div>
+      <div id="lbList"></div>
+      <p class="lb-your-rank" id="lbYourRank"></p>
+    </div>
+  </div>
+
   <div class="modal-overlay" id="saveModal" style="display:none" onclick="closeSaveStats(event)">
     <div class="modal-content">
       <button class="close-btn" onclick="closeSaveStats()">×</button>
@@ -163,6 +174,7 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="game.js"></script>
 </body>
 </html>
