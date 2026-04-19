@@ -605,13 +605,34 @@ function pickSessionCities() {
   return shuffled.slice(0, 3);
 }
 
+function showAlreadyPlayed() {
+  const state = loadState();
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomorrowStr = tomorrow.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+
+  document.getElementById('alreadyScore').textContent = state.totalScore || 0;
+  document.getElementById('tomorrowDate').textContent = `New cities on ${tomorrowStr}`;
+  document.getElementById('cityCard').style.display = 'none';
+  document.getElementById('guessSection').style.display = 'none';
+  document.getElementById('resultCard').style.display = 'none';
+  document.getElementById('endCard').style.display = 'none';
+  document.getElementById('alreadyPlayedCard').style.display = 'flex';
+}
+
 async function startGame() {
+  if (loadState().lastPlayed === getTodayString()) {
+    showAlreadyPlayed();
+    return;
+  }
+
   soloRound = 0;
   sessionScore = 0;
   sessionCities = pickSessionCities();
   sessionResults = [];
 
   document.getElementById('endCard').style.display = 'none';
+  document.getElementById('alreadyPlayedCard').style.display = 'none';
   document.getElementById('resultCard').style.display = 'none';
   document.getElementById('guessSection').style.display = 'none';
   document.getElementById('climateSection').style.display = 'none';

@@ -448,6 +448,12 @@ h1 {
   margin: 8px 0 16px;
 }
 
+.already-date {
+  font-size: 0.82rem;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
 /* End screen city cards */
 .end-cities {
   width: 100%;
