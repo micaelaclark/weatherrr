@@ -107,6 +107,21 @@ h1 {
   z-index: 50;
 }
 
+.site-footer {
+  text-align: center;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.site-footer p {
+  font-size: 0.7rem;
+  color: #d1d5db;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
 .lb-fab {
   position: static;
   width: 52px;
