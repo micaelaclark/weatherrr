@@ -544,6 +544,38 @@ h1 {
   line-height: 1.6;
 }
 
+/* Workout recommendation */
+.workout-rec {
+  width: 100%;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 16px;
+  padding: 18px 20px;
+  text-align: left;
+}
+
+.workout-rec-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #f97316;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  margin-bottom: 6px;
+}
+
+.workout-rec-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.workout-rec-reason {
+  font-size: 0.85rem;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
 /* Scoring guide */
 .scoring-guide {
   margin-top: 20px;

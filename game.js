@@ -859,6 +859,21 @@ function copyFallback(text, btn) {
   });
 }
 
+// --- Workout recommendation ---
+
+function getWorkoutRecommendation(results) {
+  const avgTemp = results.reduce((sum, r) => sum + r.actualC, 0) / results.length;
+  const tiers = [
+    { max: -5,       workout: "🔥 Hot yoga or indoor HIIT",          reason: "Today's cities are freezing — warm up from the inside." },
+    { max: 5,        workout: "🏋️ Strength training",                reason: "Cold temps out there — a solid weights session is the move." },
+    { max: 15,       workout: "🏃 Tempo run or indoor cardio",        reason: "Cool conditions today — great for pushing your pace." },
+    { max: 22,       workout: "🚴 Outdoor ride or long run",          reason: "Mild weather worldwide — perfect for endurance work." },
+    { max: 30,       workout: "⛹️ Court sports or interval training", reason: "Warm conditions today — keep moving and stay hydrated." },
+    { max: Infinity, workout: "🏊 Swimming or early morning run",     reason: "It's scorching across today's cities — keep it cool." },
+  ];
+  return { ...tiers.find(t => avgTemp < t.max), avgTemp };
+}
+
 // --- End screen ---
 
 async function showEndCard() {
@@ -880,6 +895,11 @@ async function showEndCard() {
   photoEl.style.display = 'none'; photoEl.src = '';
   document.getElementById('endCard').style.display = 'flex';
   document.getElementById('saveScoreBtnEnd').style.display = getScreenname() ? 'none' : 'block';
+
+  const rec = getWorkoutRecommendation(sessionResults);
+  document.getElementById('workoutRecTitle').textContent = rec.workout;
+  document.getElementById('workoutRecReason').textContent = rec.reason;
+  document.getElementById('workoutRec').style.display = 'block';
 
   // Fetch wiki + photos for all 3 cities in parallel
   const citiesEl = document.getElementById('endCities');
