@@ -978,7 +978,7 @@ async function showEndCard() {
   });
 }
 
-function shareEndScore() {
+async function shareEndScore() {
   const pct = Math.round(sessionScore / 3000 * 100);
   const message = document.getElementById('endMessage').textContent;
   const date = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
@@ -991,7 +991,15 @@ function shareEndScore() {
   ].join('\n');
 
   const btn = document.querySelector('#endCard .share-btn');
-  copyFallback(text, btn);
+  if (navigator.share) {
+    try {
+      await navigator.share({ text });
+    } catch (e) {
+      if (e.name !== 'AbortError') copyFallback(text, btn);
+    }
+  } else {
+    copyFallback(text, btn);
+  }
 }
 
 // --- Stats modal ---
